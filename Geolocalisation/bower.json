@@ -18,6 +18,7 @@
     "bootstrap": "~3.3.1",
     "topojson": "~1.6.18",
     "angular-ui-router": "~0.2.13",
-    "toastr": "~2.1.0"
+    "toastr": "~2.1.0",
+    "lodash": "~2.4.1"
   }
 }
