@@ -61,6 +61,7 @@
   <ItemGroup>
     <Content Include="app\app.js" />
     <Content Include="bower.json" />
+    <Content Include="content\app.css" />
     <Content Include="data\uk.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
