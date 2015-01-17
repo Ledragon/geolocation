@@ -60,7 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app\app.ts" />
+    <Content Include="app\sovereignties\sovereignties.html" />
     <Content Include="bower.json" />
+    <Content Include="bower_components\fontawesome\css\font-awesome.css" />
     <Content Include="content\app.css" />
     <Content Include="data\uk.json" />
     <Content Include="packages.config" />
@@ -70,7 +72,8 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <TypeScriptCompile Include="app\Sovereignties.ts" />
+    <TypeScriptCompile Include="app\sovereignties\Sovereignties.ts" />
+    <TypeScriptCompile Include="app\uk.ts" />
     <TypeScriptCompile Include="scripts\topojson.d.ts" />
     <TypeScriptCompile Include="scripts\typings\angularjs\angular-animate.d.ts" />
     <TypeScriptCompile Include="scripts\typings\angularjs\angular-cookies.d.ts" />

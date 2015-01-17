@@ -1,0 +1,30 @@
+﻿<div ng-controller="Sovereignties as vm">
+    <div class="row">
+        <div class="col-md-8">
+            <span class="fa fa-spin fa-spinner" ng-show="vm.isLoading"></span>
+            <!--<select>
+                <option ng-repeat="name in countries">{{name}}</option>
+            </select>-->
+            <div id="sovereignties">
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label>Scale</label>
+                    <input class="form-control" ng-model="vm.scale" />
+                </div>
+                <div class="form-group">
+                    <label>Translate x</label>
+                    <input class="form-control" ng-model="vm.translateX" />
+                </div>
+                <div class="form-group">
+                    <label>Translate y</label>
+                    <input class="form-control" ng-model="vm.translateY" />
+                </div>
+                <button ng-click="vm.update()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>

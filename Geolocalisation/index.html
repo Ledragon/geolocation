@@ -3,23 +3,27 @@
 <head>
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="bower_components/fontawesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="content/app.css" rel="stylesheet" />
     <title>Geo location</title>
 </head>
 <body ng-app="app">
+    <nav class="navbar navbar-default navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                Geolocation
+            </div>
+        </div>
+    </nav>
     <div class="container" ng-controller="ctrl">
-        <!--<div class="jumbotron">
-            <h1>{{title}}</h1>
-        </div>-->
 
         <div class="row">
-            <div class="col-md-12" id="mapContainer">
-                <!--<svg width="960" height="500" id="map">
+            <!--<div id="mapContainer">
 
-                </svg>-->
-            </div>
-            <div class="col-md-12" id="sovereignties">
-                
+            </div>-->
+
+            <div class="col-md-12">
+                <ng-include src="'app/sovereignties/sovereignties.html'"></ng-include>
             </div>
         </div>
     </div>
@@ -33,6 +37,7 @@
     <script src="bower_components/topojson/topojson.js"></script>
 
     <script src="app/app.js"></script>
-    <script src="app/Sovereignties.js"></script>
+    <script src="app/uk.js"></script>
+    <script src="app/sovereignties/Sovereignties.js"></script>
 </body>
 </html>
