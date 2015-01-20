@@ -7,9 +7,9 @@
         isLoading: boolean;
         countries: Array<any>;
 
-        translateX :number;
-        translateY:number;
-        scale :number;
+        translateX: number;
+        translateY: number;
+        scale: number;
 
     }
     export class Sovereignties implements ISovereignties {
@@ -17,10 +17,11 @@
         private _data;
         isLoading: boolean;
         countries: Array<any>;
+        selectedCountry: string;
 
-        translateX = 350;
-        translateY = 350;
-        scale = 120;
+        translateX = 0;
+        translateY = 0;
+        scale = 1;
 
         mapGroup: D3.Selection;
 
@@ -29,6 +30,7 @@
             this.isLoading = true;
             this.countries = [];
             var self = this;
+            self.selectedCountry = '';
             d3.json('data/sovereignty.topo.json', (error, data) => {
                 if (!error) {
                     var sovereignty = topojson.feature(data, data.objects.sovereignty);
@@ -51,7 +53,7 @@
         }
 
         private drawmap(containerName: string) {
-            var width = $('#'+containerName).width();
+            var width = $('#' + containerName).width();
             var height = 600;
             var svg = d3.select('#' + containerName)
                 .append('svg')
@@ -62,8 +64,8 @@
             this.mapGroup = svg.append('g');
 
             var mercatorProjection = d3.geo.mercator()
-                .scale(1)
-                .translate([0, 0]);
+                .scale(120)
+                .translate([350, 350]);
 
             var path = d3.geo.path()
                 .projection(mercatorProjection);
@@ -75,20 +77,36 @@
             var self = this;
             g.append('path')
                 .attr('d', path)
+                .on('click', (d) => {
+                    var position = [d3.event.clientX, d3.event.clientY];
+                    var tmp = mercatorProjection.invert(position);
+                    self.selectedCountry = d.properties.name;
+                    self.$scope.$apply();
+                    var name = self.mapGroup.select('text');
+                    var c = path.centroid(d)
+                        name.attr("transform", "translate(" + c + ")")
+                        .text(d.properties.name);
+                    self.mapGroup.attr({
+                        'transform': 'translate(' + -c[0] + ',' + c[1] + ')'
+                    });
+                })
                 .style({
                     fill: (d) => {
                         // Asia,Africa,Europe,South America,Antarctica,North America,Oceania,Seven seas (open ocean)
                         var color = '#ccc';
-                        if (d.properties.continent === 'Europe') {
-                            color = 'blue';
-                        } else if (d.properties.continent === 'Asia') {
-                            color = 'yellow';
-                        } else if (d.properties.continent === 'Oceania') {
-                            color = 'Green';
-                        }
+                        //if (d.properties.continent === 'Europe') {
+                        //    color = 'blue';
+                        //} else if (d.properties.continent === 'Asia') {
+                        //    color = 'yellow';
+                        //} else if (d.properties.continent === 'Oceania') {
+                        //    color = 'Green';
+                        //}
                         return color;
                     }
                 });
+            var name = this.mapGroup.append('text');
+            //var zoom = d3.behavior.zoom().on('zoom', this.zoom(this));
+            //zoom(g);
             //g.append('text')
             //    .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
             //    .style({
@@ -114,13 +132,26 @@
 
         }
 
+        zoom(self: Sovereignties) {
+            return () => {
+                var translate = d3.event.translate;
+                self.scale = d3.event.scale;
+                self.mapGroup
+                //.transition()
+                    .attr({
+                        'transform': 'translate(' + self.translateX + ',' + self.translateY + ')' +
+                        'scale(' + self.scale + ')'
+                    });
+            }
+    }
+
         update() {
             this.mapGroup
             .transition()
                 .attr({
-                    'transform': 'translate(' + this.translateX + ',' + this.translateY + ')'+
-                    'scale('+this.scale+')'
-            });
+                    'transform': 'translate(' + this.translateX + ',' + this.translateY + ')' +
+                    'scale(' + this.scale + ')'
+                });
         }
     }
 

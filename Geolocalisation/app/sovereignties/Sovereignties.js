@@ -3,13 +3,14 @@
     var Sovereignties = (function () {
         function Sovereignties($scope) {
             this.$scope = $scope;
-            this.translateX = 350;
-            this.translateY = 350;
-            this.scale = 120;
+            this.translateX = 0;
+            this.translateY = 0;
+            this.scale = 1;
             $scope.vm = this;
             this.isLoading = true;
             this.countries = [];
             var self = this;
+            self.selectedCountry = '';
             d3.json('data/sovereignty.topo.json', function (error, data) {
                 if (!error) {
                     var sovereignty = topojson.feature(data, data.objects.sovereignty);
@@ -39,28 +40,43 @@
             });
             this.mapGroup = svg.append('g');
 
-            var mercatorProjection = d3.geo.mercator().scale(1).translate([0, 0]);
+            var mercatorProjection = d3.geo.mercator().scale(120).translate([350, 350]);
 
             var path = d3.geo.path().projection(mercatorProjection);
 
             var enter = this.mapGroup.selectAll('.sovereignty').data(this._data.features).enter();
             var g = enter.append('g').classed('country', true);
             var self = this;
-            g.append('path').attr('d', path).style({
+            g.append('path').attr('d', path).on('click', function (d) {
+                var position = [d3.event.clientX, d3.event.clientY];
+                var tmp = mercatorProjection.invert(position);
+                self.selectedCountry = d.properties.name;
+                self.$scope.$apply();
+                var name = self.mapGroup.select('text');
+                var c = path.centroid(d);
+                name.attr("transform", "translate(" + c + ")").text(d.properties.name);
+                self.mapGroup.attr({
+                    'transform': 'translate(' + -c[0] + ',' + c[1] + ')'
+                });
+            }).style({
                 fill: function (d) {
                     // Asia,Africa,Europe,South America,Antarctica,North America,Oceania,Seven seas (open ocean)
                     var color = '#ccc';
-                    if (d.properties.continent === 'Europe') {
-                        color = 'blue';
-                    } else if (d.properties.continent === 'Asia') {
-                        color = 'yellow';
-                    } else if (d.properties.continent === 'Oceania') {
-                        color = 'Green';
-                    }
+
+                    //if (d.properties.continent === 'Europe') {
+                    //    color = 'blue';
+                    //} else if (d.properties.continent === 'Asia') {
+                    //    color = 'yellow';
+                    //} else if (d.properties.continent === 'Oceania') {
+                    //    color = 'Green';
+                    //}
                     return color;
                 }
             });
+            var name = this.mapGroup.append('text');
 
+            //var zoom = d3.behavior.zoom().on('zoom', this.zoom(this));
+            //zoom(g);
             //g.append('text')
             //    .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
             //    .style({
@@ -81,6 +97,16 @@
             //    })
             //    .text((d) => { return d.properties.name; })
             this.update();
+        };
+
+        Sovereignties.prototype.zoom = function (self) {
+            return function () {
+                var translate = d3.event.translate;
+                self.scale = d3.event.scale;
+                self.mapGroup.attr({
+                    'transform': 'translate(' + self.translateX + ',' + self.translateY + ')' + 'scale(' + self.scale + ')'
+                });
+            };
         };
 
         Sovereignties.prototype.update = function () {
