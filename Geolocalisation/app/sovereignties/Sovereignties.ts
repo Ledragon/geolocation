@@ -18,7 +18,8 @@
         isLoading: boolean;
         countries: Array<any>;
         selectedCountry: string;
-
+        cX: number;
+        cY: number;
         translateX = 0;
         translateY = 0;
         scale = 1;
@@ -54,7 +55,7 @@
 
         private drawmap(containerName: string) {
             var width = $('#' + containerName).width();
-            var height = 600;
+            var height = 800;
             var svg = d3.select('#' + containerName)
                 .append('svg')
                 .attr({
@@ -64,8 +65,9 @@
             this.mapGroup = svg.append('g');
 
             var mercatorProjection = d3.geo.mercator()
-                .scale(120)
-                .translate([350, 350]);
+                .translate([width / 2, height / 2])
+                .scale((width - 1) / 2 / Math.PI)
+                .center([0, 0]);
 
             var path = d3.geo.path()
                 .projection(mercatorProjection);
@@ -81,14 +83,27 @@
                     var position = [d3.event.clientX, d3.event.clientY];
                     var tmp = mercatorProjection.invert(position);
                     self.selectedCountry = d.properties.name;
-                    self.$scope.$apply();
                     var name = self.mapGroup.select('text');
                     var c = path.centroid(d)
                         name.attr("transform", "translate(" + c + ")")
                         .text(d.properties.name);
-                    self.mapGroup.attr({
-                        'transform': 'translate(' + -c[0] + ',' + c[1] + ')'
-                    });
+                    self.cX = c[0];
+                    self.cY = c[1];
+                    if (c[0] > width / 2) {
+                        self.translateX = width / 2 - c[0];
+                    }
+                    else{
+                        self.translateX = c[0];
+                    }
+                    if (c[1] > height / 2) {
+                        self.translateY = height / 2 - c[1];
+                    }
+                    else{
+                        self.translateY = c[1];
+                }
+                    //self.scale = 2;
+                    self.update();
+                    self.$scope.$apply();
                 })
                 .style({
                     fill: (d) => {
@@ -105,29 +120,6 @@
                     }
                 });
             var name = this.mapGroup.append('text');
-            //var zoom = d3.behavior.zoom().on('zoom', this.zoom(this));
-            //zoom(g);
-            //g.append('text')
-            //    .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
-            //    .style({
-            //        'text-anchor':'middle'
-            //    })
-            //    .text(d=> { return d.properties.name;});
-            //var continents = _.pluck(this._data.features, 'properties');
-            //continents = _.uniq(continents, 'continent');
-            //continents = _.pluck(continents, 'continent');
-            //console.log(continents);
-            //svg.selectAll('.country-label')
-            //    .data(this._data.features)
-            //    .enter()
-            //    .append('text')
-            //    .attr({
-            //        'dy': '.35em',
-            //        'transform': (d) => { return 'translate(' + mercatorProjection(d.geometry.coordinates) + ')'; }
-
-            //    })
-            //    .text((d) => { return d.properties.name; })
-
             this.update();
 
         }
@@ -139,8 +131,11 @@
                 self.mapGroup
                 //.transition()
                     .attr({
-                        'transform': 'translate(' + self.translateX + ',' + self.translateY + ')' +
-                        'scale(' + self.scale + ')'
+                        'transform': 'scale(' + self.scale + ')' + 'translate(' + self.translateX + ',' + self.translateY + ')'
+
+
+
+                        
                     });
             }
     }
@@ -149,8 +144,9 @@
             this.mapGroup
             .transition()
                 .attr({
-                    'transform': 'translate(' + this.translateX + ',' + this.translateY + ')' +
-                    'scale(' + this.scale + ')'
+                    //'transform-origin': this.translateX + ' ' + this.translateY,
+                    'transform': 'scale(' + this.scale + ')translate(' + this.translateX + ',' + this.translateY + ')' 
+                    
                 });
         }
     }
