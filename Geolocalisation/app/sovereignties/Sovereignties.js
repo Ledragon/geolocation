@@ -43,15 +43,6 @@
 
             var mercatorProjection = d3.geo.mercator().translate([width / 2, height / 2]).scale(120).center([5, 50]);
             var self = this;
-            var position = navigator.geolocation.getCurrentPosition(function (position) {
-                var projection = mercatorProjection([position.coords.longitude, position.coords.latitude]);
-                self.mapGroup.append('circle').attr({
-                    'cx': projection[0],
-                    'cy': projection[1],
-                    'r': 2
-                }); //.text('my position');
-            }, function () {
-            });
             var path = d3.geo.path().projection(mercatorProjection);
 
             var enter = this.mapGroup.selectAll('.sovereignty').data(this._data.features).enter();
@@ -92,6 +83,14 @@
                 ////self.scale = 2;
                 //self.update();
                 self.$scope.$apply();
+            }).on('mouseover', function (d) {
+                var s = d3.select(d3.event.currentTarget);
+                s.style('fill', 'blue');
+                self.selectedCountry = d.properties.name;
+                self.$scope.$apply();
+            }).on('mouseout', function (d) {
+                var s = d3.select(d3.event.currentTarget);
+                s.style('fill', '#ccc');
             }).style({
                 fill: function (d) {
                     // Asia,Africa,Europe,South America,Antarctica,North America,Oceania,Seven seas (open ocean)
@@ -125,6 +124,18 @@
             this.mapGroup.transition().attr({
                 'transform-origin': '50%' + ' ' + '50%',
                 'transform': 'scale(' + this.scale + ')translate(' + this.translateX + ',' + this.translateY + ')'
+            });
+        };
+
+        Sovereignties.prototype.locate = function () {
+            var position = navigator.geolocation.getCurrentPosition(function (position) {
+                //    var projection = mercatorProjection([position.coords.longitude, position.coords.latitude]);
+                //    self.mapGroup.append('circle').attr({
+                //        'cx': projection[0],
+                //        'cy': projection[1],
+                //        'r': 2
+                //    });//.text('my position');
+            }, function () {
             });
         };
 

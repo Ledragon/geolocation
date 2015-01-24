@@ -70,14 +70,6 @@
                 .scale(120)
                 .center([5, 50]);
             var self = this;
-            var position = navigator.geolocation.getCurrentPosition((position) => {
-                var projection = mercatorProjection([position.coords.longitude, position.coords.latitude]);
-                self.mapGroup.append('circle').attr({
-                    'cx': projection[0],
-                    'cy': projection[1],
-                    'r': 2
-                });//.text('my position');
-            }, () => { });
             var path = d3.geo.path()
                 .projection(mercatorProjection);
 
@@ -99,8 +91,8 @@
                     //console.log('centroid:'+c);
                     self.translateX = -bounds[0][0];
                     self.translateY = -bounds[0][1];
-              
-                    self.scale = Math.min(width /(bounds[1][0] - bounds[0][0]),height/(bounds[1][1]-bounds[0][1]));
+
+                    self.scale = Math.min(width / (bounds[1][0] - bounds[0][0]), height / (bounds[1][1] - bounds[0][1]));
                     self.update();
                     //name.attr("transform", "translate(" + c + ")")
                     //    .text(d.properties.name);
@@ -121,6 +113,16 @@
                     ////self.scale = 2;
                     //self.update();
                     self.$scope.$apply();
+                })
+                .on('mouseover', (d) => {
+                    var s = d3.select(d3.event.currentTarget);
+                    s.style('fill', 'blue');
+                    self.selectedCountry = d.properties.name;
+                    self.$scope.$apply();
+                })
+                .on('mouseout', (d) => {
+                    var s = d3.select(d3.event.currentTarget);
+                    s.style('fill', '#ccc');
                 })
                 .style({
                     fill: (d) => {
@@ -163,7 +165,19 @@
                 });
         }
 
-        reset(){
+        locate() {
+            var position = navigator.geolocation.getCurrentPosition((position) => {
+                //    var projection = mercatorProjection([position.coords.longitude, position.coords.latitude]);
+                //    self.mapGroup.append('circle').attr({
+                //        'cx': projection[0],
+                //        'cy': projection[1],
+                //        'r': 2
+                //    });//.text('my position');
+            }, () => { });
+
+        }
+
+        reset() {
             this.scale = 1;
             this.translateX = 0;
             this.translateY = 0;
