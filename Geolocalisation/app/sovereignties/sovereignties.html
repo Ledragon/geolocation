@@ -1,6 +1,6 @@
-﻿<div ng-controller="Sovereignties as vm">
-    <div class="row">
-        <div class="col-md-8">
+﻿<div>
+    <div class="row" ng-controller="Sovereignties as vm">
+        <div class="col-md-6">
             <span class="fa fa-spin fa-spinner" ng-show="vm.isLoading"></span>
             <!--<select>
                 <option ng-repeat="name in countries">{{name}}</option>
@@ -10,27 +10,60 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="form-horizontal">
-                <div class="form-group">
-                    <label>Scale</label>
-                    <input class="form-control" ng-model="vm.scale" />
+            <div class="well">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label>Scale</label>
+                        <input class="form-control" ng-model="vm.scale" />
+                    </div>
+                    <div class="form-group">
+                        <label>Translate x</label>
+                        <input class="form-control" ng-model="vm.translateX" />
+                    </div>
+                    <div class="form-group">
+                        <label>Translate y</label>
+                        <input class="form-control" ng-model="vm.translateY" />
+                    </div>
+                    <button class="btn btn-sm" ng-click="vm.update()">Update</button>
+                    <button class="btn btn-sm" ng-click="vm.reset()">Reset</button>
+                    <!--<button class="btn btn-sm" ng-click="vm.locate()">Find me</button>-->
                 </div>
-                <div class="form-group">
-                    <label>Translate x</label>
-                    <input class="form-control" ng-model="vm.translateX" />
-                </div>
-                <div class="form-group">
-                    <label>Translate y</label>
-                    <input class="form-control" ng-model="vm.translateY" />
-                </div>
-                <button class="btn btn-sm" ng-click="vm.update()">Update</button>
-                <button class="btn btn-sm" ng-click="vm.reset()">Reset</button>
             </div>
         </div>
-        <div class="col-md-1">
-            <span>{{vm.selectedCountry}}</span>
-            <span>{{vm.cX}}</span>
-            <span>{{vm.cY}}</span>
+        <!--<div class="col-md-1">
+            <div class="well">
+                <span>{{vm.selectedCountry}}</span>
+                <span>{{vm.cX}}</span>
+                <span>{{vm.cY}}</span>
+            </div>
+        </div>-->
+        <div class="col-md-3">
+            <div class="well">
+                <div ng-repeat="user in vm.userList">
+                    {{user.name}} - {{user.country}} ({{user.latitude}}, {{user.longitude}})
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ng-include src="'app/controls/addUser.html'"></ng-include>
+            <!--<div class="panel panel-primary">
+                <div class="panel-heading">
+                    Add user
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Name" class="control-label">Name</label>
+                        <input type="text" class="form-control" id="Name" ng-model="vm.name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country" class="control-label">Country</label>
+                        <input type="text" class="form-control" id="Country" ng-model="vm.country" required />
+                    </div>
+                    <button class="btn btn-sm" ng-click="vm.add()">Add</button>
+                </div>
+            </div>
+        </div>-->
     </div>
 </div>

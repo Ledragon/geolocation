@@ -1,0 +1,21 @@
+﻿<form ng-controller="User as vm">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Add user
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input type="text" class="form-control" id="Name" ng-model="vm.user.name" required />
+            </div>
+            <div class="form-group">
+                <label for="Country" class="control-label">Country</label>
+                <input type="text" class="form-control" id="Country" ng-model="vm.user.country" required />
+            </div>
+            <span>Latitude: {{vm.user.latitude}}</span>
+            <span>Latitude: {{vm.user.longitude}}</span>
+            <button class="btn btn-sm" ng-click="vm.locate()">Find me</button>
+            <button class="btn btn-sm" ng-click="vm.add()">Add</button>
+        </div>
+    </div>
+</form>

@@ -9,9 +9,33 @@
             $scope.vm = this;
             this.isLoading = true;
             this.countries = [];
-            var self = this;
-            self.selectedCountry = '';
+            this.selectedCountry = '';
+            this.init('sovereignties');
+            this.userList = [];
 
+            var self = this;
+            $scope.$on('user-added', function (data, arg) {
+                self.userList.push(arg);
+                var projected = self._mercatorProjection([arg.longitude, arg.latitude]);
+                var country = _.find(self._data.features, function (d, i) {
+                    var bounds = self._path.bounds(d);
+                    var result = bounds[0][0] <= projected[0] && bounds[1][0] >= projected[0] && bounds[0][1] <= projected[1] && bounds[1][1] >= projected[1];
+                    return result;
+                });
+                if (country) {
+                    console.log(country);
+                }
+                self.mapGroup.append('circle').attr({
+                    'cx': projected[0],
+                    'cy': projected[1],
+                    'r': 2 / self.scale
+                });
+            });
+            this.loadMap();
+            //this.isLoading = false;
+        }
+        Sovereignties.prototype.loadMap = function () {
+            var self = this;
             d3.json('data/sovereignty.topo.json', function (error, data) {
                 if (!error) {
                     var sovereignty = topojson.feature(data, data.objects.sovereignty);
@@ -31,58 +55,28 @@
                     self.$scope.$apply();
                 }
             });
-        }
-        Sovereignties.prototype.drawmap = function (containerName) {
-            var width = $('#' + containerName).width();
-            var height = 800;
+        };
+
+        Sovereignties.prototype.init = function (containerName) {
+            this._width = $('#' + containerName).width();
+            this._height = 400;
             var svg = d3.select('#' + containerName).append('svg').attr({
-                'width': width,
-                'height': height
+                'width': this._width,
+                'height': this._height
             });
             this.mapGroup = svg.append('g');
 
-            var mercatorProjection = d3.geo.mercator().translate([width / 2, height / 2]).scale(120).center([5, 50]);
-            var self = this;
-            var path = d3.geo.path().projection(mercatorProjection);
+            this._mercatorProjection = d3.geo.mercator().translate([this._width / 2, this._height / 2]).scale(120).center([5, 50]);
+            this._path = d3.geo.path().projection(this._mercatorProjection);
+        };
 
+        Sovereignties.prototype.drawmap = function (containerName) {
+            var _this = this;
             var enter = this.mapGroup.selectAll('.sovereignty').data(this._data.features).enter();
             var g = enter.append('g').classed('country', true);
             var self = this;
-            g.append('path').attr('d', path).on('click', function (d) {
-                var position = [d3.event.clientX, d3.event.clientY];
-                var tmp = mercatorProjection.invert(position);
-                self.selectedCountry = d.properties.name;
-                var name = self.mapGroup.select('text');
-                var c = path.centroid(d);
-                var bounds = path.bounds(d);
-
-                //console.log('bound:' + bounds);
-                //console.log('centroid:'+c);
-                self.translateX = -bounds[0][0];
-                self.translateY = -bounds[0][1];
-
-                self.scale = Math.min(width / (bounds[1][0] - bounds[0][0]), height / (bounds[1][1] - bounds[0][1]));
-                self.update();
-
-                //name.attr("transform", "translate(" + c + ")")
-                //    .text(d.properties.name);
-                //self.cX = c[0];
-                //self.cY = c[1];
-                //if (c[0] > width / 2) {
-                //    self.translateX = width / 2 - c[0];
-                //}
-                //else {
-                //    self.translateX = c[0];
-                //}
-                //if (c[1] > height / 2) {
-                //    self.translateY = height / 2 - c[1];
-                //}
-                //else {
-                //    self.translateY = c[1];
-                //}
-                ////self.scale = 2;
-                //self.update();
-                self.$scope.$apply();
+            g.append('path').attr('d', this._path).on('click', function (d) {
+                _this.clickCountry(d);
             }).on('mouseover', function (d) {
                 var s = d3.select(d3.event.currentTarget);
                 s.style('fill', 'blue');
@@ -92,22 +86,18 @@
                 var s = d3.select(d3.event.currentTarget);
                 s.style('fill', '#ccc');
             }).style({
-                fill: function (d) {
-                    // Asia,Africa,Europe,South America,Antarctica,North America,Oceania,Seven seas (open ocean)
-                    var color = '#ccc';
-
-                    //if (d.properties.continent === 'Europe') {
-                    //    color = 'blue';
-                    //} else if (d.properties.continent === 'Asia') {
-                    //    color = 'yellow';
-                    //} else if (d.properties.continent === 'Oceania') {
-                    //    color = 'Green';
-                    //}
-                    return color;
-                }
+                fill: '#ccc'
             });
-            var name = this.mapGroup.append('text');
             this.update();
+        };
+
+        Sovereignties.prototype.clickCountry = function (d) {
+            var bounds = this._path.bounds(d);
+            this.translateX = -bounds[0][0];
+            this.translateY = -bounds[0][1];
+            this.scale = Math.min(this._width / (bounds[1][0] - bounds[0][0]), this._height / (bounds[1][1] - bounds[0][1]));
+            this.update();
+            this.$scope.$apply();
         };
 
         Sovereignties.prototype.zoom = function (self) {
@@ -125,16 +115,18 @@
                 'transform-origin': '50%' + ' ' + '50%',
                 'transform': 'scale(' + this.scale + ')translate(' + this.translateX + ',' + this.translateY + ')'
             });
+            this.mapGroup.select('circle').attr({ 'r': (2 / this.scale) });
         };
 
         Sovereignties.prototype.locate = function () {
+            var self = this;
             var position = navigator.geolocation.getCurrentPosition(function (position) {
-                //    var projection = mercatorProjection([position.coords.longitude, position.coords.latitude]);
-                //    self.mapGroup.append('circle').attr({
-                //        'cx': projection[0],
-                //        'cy': projection[1],
-                //        'r': 2
-                //    });//.text('my position');
+                var projection = self._mercatorProjection([position.coords.longitude, position.coords.latitude]);
+                self.mapGroup.append('circle').attr({
+                    'cx': projection[0],
+                    'cy': projection[1],
+                    'r': 2 / self.scale
+                }); //.text('my position');
             }, function () {
             });
         };

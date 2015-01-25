@@ -1,0 +1,1 @@
+{"version":3,"file":"User.js","sourceRoot":"","sources":["User.ts"],"names":["Models","Models.user","Models.user.constructor"],"mappings":"AAAA,IAAO,MAAM;AAYZ,CAZD,UAAO,MAAM;IACTA;QAMIC,cAAYA,IAAWA,EAAEA,OAAcA;YACnCC,IAAIA,CAACA,IAAIA,GAAGA,IAAIA;YAChBA,IAAIA,CAACA,OAAOA,GAAGA,OAAOA;QAC1BA,CAACA;QACLD,YAACA;IAADA,CAACA,IAAAD;IAVDA,mBAUCA;AACLA,CAACA,2BAAA"}
