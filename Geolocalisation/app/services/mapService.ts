@@ -1,6 +1,8 @@
 ﻿module Services {
     export interface IMapService {
-        getCountry(latitude, longitude);
+        getCountry(longitude, latitude): any;
+        plot(longitude, latitude): void;
+        init(containerName: string): void;
     }
 
     class mapService {
@@ -12,8 +14,9 @@
         private _height: number;
         private _mapGroup: D3.Selection;
         private _data;
+        private _selectedCountry: string;
 
-        constructor() {
+        constructor(private $rootScope: ng.IRootScopeService) {
             this.loadMap();
 
         }
@@ -24,6 +27,7 @@
                 if (!error) {
                     var sovereignty = topojson.feature(data, data.objects.sovereignty);
                     self._data = sovereignty;
+                    this.drawmap();
                 }
             })
         }
@@ -45,7 +49,6 @@
                 .center([5, 50]);
             this._path = d3.geo.path()
                 .projection(this._mercatorProjection);
-            this.drawmap();
 
         }
 
@@ -66,7 +69,8 @@
                 .on('mouseover', (d) => {
                     var s = d3.select(d3.event.currentTarget);
                     s.style('fill', 'blue');
-                    //self.selectedCountry = d.properties.name;
+                    self._selectedCountry = d.properties.name;
+                    self.$rootScope.$broadcast('country-hover', self._selectedCountry);
                     //self.$scope.$apply();
                 })
                 .on('mouseout', (d) => {
@@ -76,6 +80,7 @@
                 .style({
                     fill: '#ccc'
                 });
+            this._mapGroup.append('circle').classed('position', true);
             //this.update();
         }
 
@@ -93,8 +98,20 @@
             }
             return country;
         }
+
+        plot(longitude, latitude) {
+            var projected = this._mercatorProjection([longitude, latitude]);
+            this._mapGroup
+                .selectAll('circle')
+                .attr({
+                    'cx': projected[0],
+                    'cy': projected[1],
+                    'r': 2
+                });
+        }
     }
 
     var app = angular.module('app');
-    app.factory(mapService.serviceId, [() => new mapService()]);
+    app.factory(mapService.serviceId, [
+        '$rootScope', ($rootScope) => new mapService($rootScope)]);
 } 

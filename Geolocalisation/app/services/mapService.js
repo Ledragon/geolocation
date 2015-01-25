@@ -1,15 +1,18 @@
 ﻿var Services;
 (function (Services) {
     var mapService = (function () {
-        function mapService() {
+        function mapService($rootScope) {
+            this.$rootScope = $rootScope;
             this.loadMap();
         }
         mapService.prototype.loadMap = function () {
+            var _this = this;
             var self = this;
             d3.json('data/sovereignty.topo.json', function (error, data) {
                 if (!error) {
                     var sovereignty = topojson.feature(data, data.objects.sovereignty);
                     self._data = sovereignty;
+                    _this.drawmap();
                 }
             });
         };
@@ -25,7 +28,6 @@
 
             this._mercatorProjection = d3.geo.mercator().translate([this._width / 2, this._height / 2]).scale(120).center([5, 50]);
             this._path = d3.geo.path().projection(this._mercatorProjection);
-            this.drawmap();
         };
 
         mapService.prototype.drawmap = function () {
@@ -37,7 +39,8 @@
             }).on('mouseover', function (d) {
                 var s = d3.select(d3.event.currentTarget);
                 s.style('fill', 'blue');
-                //self.selectedCountry = d.properties.name;
+                self._selectedCountry = d.properties.name;
+                self.$rootScope.$broadcast('country-hover', self._selectedCountry);
                 //self.$scope.$apply();
             }).on('mouseout', function (d) {
                 var s = d3.select(d3.event.currentTarget);
@@ -45,6 +48,7 @@
             }).style({
                 fill: '#ccc'
             });
+            this._mapGroup.append('circle').classed('position', true);
             //this.update();
         };
 
@@ -62,13 +66,22 @@
             }
             return country;
         };
+
+        mapService.prototype.plot = function (longitude, latitude) {
+            var projected = this._mercatorProjection([longitude, latitude]);
+            this._mapGroup.selectAll('circle').attr({
+                'cx': projected[0],
+                'cy': projected[1],
+                'r': 2
+            });
+        };
         mapService.serviceId = 'mapService';
         return mapService;
     })();
 
     var app = angular.module('app');
-    app.factory(mapService.serviceId, [function () {
-            return new mapService();
+    app.factory(mapService.serviceId, ['$rootScope', function ($rootScope) {
+            return new mapService($rootScope);
         }]);
 })(Services || (Services = {}));
 //# sourceMappingURL=mapService.js.map
