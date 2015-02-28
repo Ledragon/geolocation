@@ -15,28 +15,29 @@
             </div>
         </div>
     </nav>
-    <div class="container" ng-controller="ctrl">
-
-        <div class="row">
+    <div class="container">
+        <ui-view></ui-view>
+        <!--<div class="row">-->
             <!--<div id="mapContainer">
 
             </div>-->
 
-            <div class="col-md-12">
+            <!--<div class="col-md-12">
                 <ng-include src="'app/sovereignties/sovereignties.html'"></ng-include>
-            </div>
-        </div>
+            </div>-->
+        <!--</div>-->
     </div>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/lodash/dist/lodash.min.js"></script>
 
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>    
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="bower_components/topojson/topojson.js"></script>
     
     <script src="app/app.js"></script>
+    <script src="app/routes/zoom/zoomController.js"></script>
     <script src="app/services/mapService.js"></script>
     <script src="app/uk.js"></script>
     <script src="app/sovereignties/Sovereignties.js"></script>

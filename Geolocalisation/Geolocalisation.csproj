@@ -61,6 +61,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="app\app.ts" />
     <Content Include="app\controls\addUser.html" />
+    <Content Include="app\routes\home\home.html" />
+    <Content Include="app\routes\zoom\zoom.html" />
     <Content Include="app\sovereignties\sovereignties.html" />
     <Content Include="bower.json" />
     <Content Include="bower_components\fontawesome\css\font-awesome.css" />
@@ -74,6 +76,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <TypeScriptCompile Include="app\models\User.ts" />
+    <TypeScriptCompile Include="app\routes\zoom\zoomController.ts" />
     <TypeScriptCompile Include="app\services\mapService.ts" />
     <TypeScriptCompile Include="app\sovereignties\Sovereignties.ts" />
     <TypeScriptCompile Include="app\sovereignties\User.ts" />
