@@ -1,4 +1,4 @@
-﻿var Controllers;
+var Controllers;
 (function (Controllers) {
     var zoomController = (function () {
         function zoomController() {
@@ -8,8 +8,6 @@
     })();
     Controllers.zoomController = zoomController;
     var app = angular.module('app');
-    app.controller('zoomController', [function () {
-            return new zoomController();
-        }]);
+    app.controller('zoomController', [function () { return new zoomController(); }]);
 })(Controllers || (Controllers = {}));
 //# sourceMappingURL=zoomController.js.map

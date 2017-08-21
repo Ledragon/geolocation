@@ -1,4 +1,4 @@
-﻿var Utils;
+var Utils;
 (function (Utils) {
     var User = (function () {
         function User($scope, $rootScope, mapService) {
@@ -13,7 +13,6 @@
                 this.$rootScope.$broadcast('user-added', this.user);
             }
         };
-
         User.prototype.locate = function () {
             var self = this;
             var position = navigator.geolocation.getCurrentPosition(function (position) {
@@ -27,7 +26,6 @@
             }, function () {
             });
         };
-
         User.prototype.position = function () {
             var country = this.mapService.getCountry(this.user.longitude, this.user.latitude);
             if (country) {
@@ -40,8 +38,6 @@
     })();
     Utils.User = User;
     var app = angular.module('app');
-    app.controller(User.controllerId, ['$scope', '$rootScope', 'mapService', function ($scope, $rootScope, mapService) {
-            return new User($scope, $rootScope, mapService);
-        }]);
+    app.controller(User.controllerId, ['$scope', '$rootScope', 'mapService', function ($scope, $rootScope, mapService) { return new User($scope, $rootScope, mapService); }]);
 })(Utils || (Utils = {}));
 //# sourceMappingURL=User.js.map

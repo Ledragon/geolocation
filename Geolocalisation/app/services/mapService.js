@@ -1,4 +1,4 @@
-﻿var Services;
+var Services;
 (function (Services) {
     var mapService = (function () {
         function mapService($rootScope) {
@@ -16,7 +16,6 @@
                 }
             });
         };
-
         mapService.prototype.init = function (containerName) {
             this._width = $('#' + containerName).width();
             this._height = 400;
@@ -25,11 +24,9 @@
                 'height': this._height
             });
             this._mapGroup = svg.append('g');
-
             this._mercatorProjection = d3.geo.mercator().translate([this._width / 2, this._height / 2]).scale(120).center([5, 50]);
             this._path = d3.geo.path().projection(this._mercatorProjection);
         };
-
         mapService.prototype.drawmap = function () {
             var enter = this._mapGroup.selectAll('.sovereignty').data(this._data.features).enter();
             var g = enter.append('g').classed('country', true);
@@ -51,7 +48,6 @@
             this._mapGroup.append('circle').classed('position', true);
             //this.update();
         };
-
         mapService.prototype.getCountry = function (longitude, latitude) {
             var _this = this;
             var self = this;
@@ -66,7 +62,6 @@
             }
             return country;
         };
-
         mapService.prototype.plot = function (longitude, latitude) {
             var projected = this._mercatorProjection([longitude, latitude]);
             this._mapGroup.selectAll('circle').attr({
@@ -78,10 +73,10 @@
         mapService.serviceId = 'mapService';
         return mapService;
     })();
-
     var app = angular.module('app');
-    app.factory(mapService.serviceId, ['$rootScope', function ($rootScope) {
-            return new mapService($rootScope);
-        }]);
+    app.factory(mapService.serviceId, [
+        '$rootScope',
+        function ($rootScope) { return new mapService($rootScope); }
+    ]);
 })(Services || (Services = {}));
 //# sourceMappingURL=mapService.js.map

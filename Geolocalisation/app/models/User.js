@@ -1,4 +1,4 @@
-﻿var Models;
+var Models;
 (function (Models) {
     var user = (function () {
         function user(name, country) {

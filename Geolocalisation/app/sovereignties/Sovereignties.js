@@ -1,4 +1,5 @@
-﻿var Utils;
+/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+var Utils;
 (function (Utils) {
     var Sovereignties = (function () {
         function Sovereignties($scope, mapService) {
@@ -13,7 +14,6 @@
             this.selectedCountry = '';
             mapService.init('sovereignties');
             this.userList = [];
-
             var self = this;
             $scope.$on('user-added', function (data, arg) {
                 self.userList.push(arg);
@@ -37,10 +37,11 @@
         return Sovereignties;
     })();
     Utils.Sovereignties = Sovereignties;
-
     var app = angular.module('app');
-    app.controller('Sovereignties', ['$scope', 'mapService', function ($scope, mapService) {
-            return new Sovereignties($scope, mapService);
-        }]);
+    app.controller('Sovereignties', [
+        '$scope',
+        'mapService',
+        function ($scope, mapService) { return new Sovereignties($scope, mapService); }
+    ]);
 })(Utils || (Utils = {}));
 //# sourceMappingURL=Sovereignties.js.map

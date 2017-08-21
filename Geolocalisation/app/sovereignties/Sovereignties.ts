@@ -1,4 +1,5 @@
-﻿module Utils {
+/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+module Utils {
     export interface ISovereigntiesScope extends ng.IScope {
         vm: ISovereignties;
     }
